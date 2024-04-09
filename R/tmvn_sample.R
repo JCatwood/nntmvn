@@ -17,11 +17,15 @@
 #' @export
 seq_Vecc_samp_func <- function(y, cens_lb, cens_ub, mask_cens, NN, locs, cov_name,
                                cov_parm, covmat = NULL,
-                               method = c("exact", "Vecchia")) {
+                               method = c("exact", "Vecchia"),
+                               seed = NULL) {
   if (is.null(covmat)) {
     covfunc <- getFromNamespace(cov_name, "GpGp")
   } else {
     covfunc <- NULL
+  }
+  if (!is.null(seed)) {
+    set.seed(seed)
   }
   ind_cens <- which(mask_cens)
   method <- method[1]
