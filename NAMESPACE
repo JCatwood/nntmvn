@@ -2,5 +2,4 @@
 
 export(seq_Vecc_samp_func)
 import(GpGp)
-import(TruncatedNormal)
-import(VeccTMVN)
+importFrom(TruncatedNormal,rtmvnorm)

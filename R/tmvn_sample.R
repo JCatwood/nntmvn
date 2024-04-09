@@ -1,15 +1,8 @@
-#' @import TruncatedNormal
-#' @import VeccTMVN
-#' @import GpGp
-
-library(TruncatedNormal)
-library(VeccTMVN)
-library(GpGp)
-
-
 #' Simulate truncated multivariate normal (TMVN) as censored locations using
 #'  nearest neighbors
 #'
+#' @importFrom TruncatedNormal rtmvnorm
+#' @import GpGp
 #' @param y uncensored responses of length n, where n is the number of locations
 #' @param cens_lb lower bound vector for TMVN of length n
 #' @param cens_ub upper bound vector for TMVN of length n
@@ -44,15 +37,17 @@ seq_Vecc_samp_func <- function(y, cens_lb, cens_ub, mask_cens, NN, locs, cov_nam
     cens_lb_sub <- cens_lb[NN_row]
     cens_ub_sub <- cens_ub[NN_row]
     n_cens_sub <- sum(mask_cens_sub)
-    if (n_cens_sub == length(NN_row)) {
-      cond_covmat_sub_cens <- covmat_sub
-      cond_mean_sub_cens <- rep(0, n_cens_sub)
-    } else if (method == "exact") {
-      tmp_mat <- covmat_sub[mask_cens_sub, !mask_cens_sub] %*%
-        solve(covmat_sub[!mask_cens_sub, !mask_cens_sub])
-      cond_covmat_sub_cens <- covmat_sub[mask_cens_sub, mask_cens_sub] -
-        tmp_mat %*% covmat_sub[!mask_cens_sub, mask_cens_sub]
-      cond_mean_sub_cens <- as.vector(tmp_mat %*% y_sub[!mask_cens_sub])
+    if (method == "exact") {
+      if (n_cens_sub == length(NN_row)) {
+        cond_covmat_sub_cens <- covmat_sub
+        cond_mean_sub_cens <- rep(0, n_cens_sub)
+      } else {
+        tmp_mat <- covmat_sub[mask_cens_sub, !mask_cens_sub] %*%
+          solve(covmat_sub[!mask_cens_sub, !mask_cens_sub])
+        cond_covmat_sub_cens <- covmat_sub[mask_cens_sub, mask_cens_sub] -
+          tmp_mat %*% covmat_sub[!mask_cens_sub, mask_cens_sub]
+        cond_mean_sub_cens <- as.vector(tmp_mat %*% y_sub[!mask_cens_sub])
+      }
       samp_cens_sub <- t(TruncatedNormal::rtmvnorm(
         1, cond_mean_sub_cens,
         cond_covmat_sub_cens,
