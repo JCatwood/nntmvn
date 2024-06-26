@@ -1,12 +1,11 @@
 Package: nntmvn
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Draw Samples of Truncated Multivariate Normal Distributions
+Version: 0.0.1
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person("Jian Cao", role = c("aut", "cre"), email = "jcao2416@gmail.com"), 
+    person("Matthias Katzfuss", role = "aut"))
+Description: Draw samples from truncated multivariate normal distribution using the sequential nearest neighbor method introduced in https://arxiv.org/abs/2406.17307
+License: use_mit_license()
 Encoding: UTF-8
 Imports: GpGp, TruncatedNormal, VeccTMVN
 Roxygen: list(markdown = TRUE)
