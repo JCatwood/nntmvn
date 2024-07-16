@@ -3,3 +3,4 @@
 export(rtmvn_snn)
 import(GpGp)
 importFrom(TruncatedNormal,rtmvnorm)
+importFrom(utils,getFromNamespace)

@@ -2,6 +2,7 @@
 #'  nearest neighbors
 #'
 #' @importFrom TruncatedNormal rtmvnorm
+#' @importFrom utils getFromNamespace
 #' @import GpGp
 #' @param y uncensored responses of length n, where n is the number of all responses
 #' @param cens_lb lower bound vector for TMVN of length n
