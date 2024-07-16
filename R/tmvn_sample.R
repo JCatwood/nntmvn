@@ -74,6 +74,8 @@ rtmvn_snn <- function(y, cens_lb, cens_ub, mask_cens, NN, locs, cov_name,
         solve(covmat_sub[!mask_cens_sub, !mask_cens_sub])
       cond_covmat_sub_cens <- covmat_sub[mask_cens_sub, mask_cens_sub] -
         tmp_mat %*% covmat_sub[!mask_cens_sub, mask_cens_sub]
+      cond_covmat_sub_cens[lower.tri(cond_covmat_sub_cens)] = 
+        t(cond_covmat_sub_cens)[lower.tri(cond_covmat_sub_cens)]
       cond_mean_sub_cens <- as.vector(tmp_mat %*% y_sub[!mask_cens_sub])
     }
     samp_cens_sub <- t(TruncatedNormal::rtmvnorm(
