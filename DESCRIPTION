@@ -9,7 +9,7 @@ Author: Jian Cao [aut, cre],
         Matthias Katzfuss [aut]
 Maintainer: Jian Cao <jcao2416@gmail.com>
 License: GPL (>= 2)
-Description: Draw samples from truncated multivariate normal distribution using the sequential nearest neighbor (SNN) method introduced in "Scalable Sampling of Truncated Multivariate Normals Using Sequential Nearest-Neighbor Approximation" <arXiv:2406.17307>
+Description: Draw samples from truncated multivariate normal distribution using the sequential nearest neighbor (SNN) method introduced in "Scalable Sampling of Truncated Multivariate Normals Using Sequential Nearest-Neighbor Approximation" <doi:10.48550/arXiv.2406.17307>.
 Encoding: UTF-8
 Imports: GpGp, TruncatedNormal
 Suggests: RANN
