@@ -1,6 +1,6 @@
 Package: nntmvn
 Title: Draw Samples of Truncated Multivariate Normal Distributions
-Version: 1.0.0
+Version: 1.1.0
 Date: 2024-07-15
 Authors@R: 
     c(person("Jian Cao", role = c("aut", "cre"), email = "jcao2416@gmail.com"), 
@@ -11,7 +11,7 @@ Maintainer: Jian Cao <jcao2416@gmail.com>
 License: GPL (>= 2)
 Description: Draw samples from truncated multivariate normal distribution using the sequential nearest neighbor (SNN) method introduced in "Scalable Sampling of Truncated Multivariate Normals Using Sequential Nearest-Neighbor Approximation" <doi:10.48550/arXiv.2406.17307>.
 Encoding: UTF-8
-Imports: GpGp, TruncatedNormal
-Suggests: RANN
+Imports: GpGp, TruncatedNormal, RANN
+LinkingTo: Rcpp
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
