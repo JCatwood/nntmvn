@@ -16,6 +16,7 @@
 #' @param cov_name covariance function name from the `GpGp` package
 #' @param cov_parm parameters for the covariance function from the `GpGp` package
 #' @param NN n X m matrix for nearest neighbors. i-th row is the nearest neighbor indices of y_i. `NN[i, 1]` should be `i`
+#' @param ordering `0` for do not reorder, `1` for variance descending order
 #' @param seed set seed for reproducibility
 #' @return a vector of length n representing the underlying GP responses
 #' @export
@@ -36,10 +37,14 @@
 #' lb <- rep(-Inf, 100)
 #' ub <- rep(0.3, 100)
 #' m <- 10
-#' y_samp_mtd1 <- rtmvn_snn(y_cens, lb, ub, mask, m = m, locs = x, 
-#'                          cov_name = cov_name, cov_parm = cov_parm, seed = 123)
-#' y_samp_mtd2 <- rtmvn_snn(y_cens, lb, ub, mask, m = m, covmat = covmat, 
-#'                          seed = 123)
+#' y_samp_mtd1 <- rtmvn_snn(y_cens, lb, ub, mask,
+#'   m = m, locs = x,
+#'   cov_name = cov_name, cov_parm = cov_parm, seed = 123
+#' )
+#' y_samp_mtd2 <- rtmvn_snn(y_cens, lb, ub, mask,
+#'   m = m, covmat = covmat,
+#'   seed = 123
+#' )
 #' plot(x, y_cens, ylim = range(y))
 #' points(x[mask, ], y[mask], col = "blue")
 #' plot(x, y_cens, ylim = range(y))
@@ -49,7 +54,7 @@
 #'
 rtmvn_snn <- function(y, cens_lb, cens_ub, mask_cens, m = 30, covmat = NULL,
                       locs = NULL, cov_name = NULL, cov_parm = NULL, NN = NULL,
-                      seed = NULL) {
+                      ordering = 0, seed = NULL) {
   if (is.null(covmat)) {
     if (is.null(locs) || is.null(cov_name) || is.null(cov_parm)) {
       stop("locs, cov_name, cov_parm cannot be NULL when covmat is NULL\n")
@@ -60,6 +65,48 @@ rtmvn_snn <- function(y, cens_lb, cens_ub, mask_cens, m = 30, covmat = NULL,
   }
   if (!is.null(seed)) {
     set.seed(seed)
+  }
+  if (ordering == 0) {
+
+  } else if (ordering == 1) {
+    if (!is.null(covmat)) {
+      scaled_ub <- cens_ub[mask_cens] / sqrt(diag(covmat)[mask_cens])
+      scaled_lb <- cens_lb[mask_cens] / sqrt(diag(covmat)[mask_cens])
+    } else {
+      scaled_ub <- cens_ub[mask_cens]
+      scaled_lb <- cens_lb[mask_cens]
+    }
+    order_new <- 1:length(y)
+    marginal_pr <- exp(TruncatedNormal::lnNpr(scaled_lb, scaled_ub))
+    if (any(marginal_pr < 1e-20)) {
+      warning(paste(
+        "Reordering based on marginal variance cannot be",
+        "performed due to marginal probability being too small\n"
+      ))
+    } else {
+      marginal_var <- 1 - (x_times_dnorm(scaled_ub) -
+        x_times_dnorm(scaled_lb)) / marginal_pr -
+        ((dnorm(scaled_ub) - dnorm(scaled_lb)) / marginal_pr)^2
+      order_new[mask_cens] <- order_new[mask_cens][order(marginal_var,
+        decreasing = TRUE
+      )]
+      y <- y[order_new]
+      cens_lb <- cens_lb[order_new]
+      cens_ub <- cens_ub[order_new]
+      # mask_cens <- mask_cens[order_new]
+      if (!is.null(locs)) {
+        locs <- locs[order_new, , drop = FALSE]
+      }
+      if (!is.null(covmat)) {
+        covmat <- covmat[order_new, order_new, drop = FALSE]
+      }
+      if (!is.null(NN)) {
+        warning(paste("When ordering is", ordering, "the input NN is ignored\n"))
+        NN <- NULL
+      }
+    }
+  } else {
+    stop("Undefined ordering. Allowed input for ordering is 0 or 1")
   }
   # find NN
   if (is.null(NN)) {
@@ -103,5 +150,17 @@ rtmvn_snn <- function(y, cens_lb, cens_ub, mask_cens, m = 30, covmat = NULL,
     y[i] <- samp_cens_sub[1]
     mask_cens[i] <- FALSE
   }
+  if (exists("order_new")) {
+    order_new_rev <- c(1:length(y))
+    order_new_rev[order_new] <- c(1:length(y))
+    return(y[order_new_rev])
+  } else {
+    return(y)
+  }
+}
+
+x_times_dnorm <- function(x) {
+  y <- x * dnorm(x)
+  y[is.nan(y)] <- 0
   y
 }

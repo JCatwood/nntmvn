@@ -16,6 +16,7 @@ rtmvn_snn(
   cov_name = NULL,
   cov_parm = NULL,
   NN = NULL,
+  ordering = 0,
   seed = NULL
 )
 }
@@ -40,6 +41,8 @@ rtmvn_snn(
 \item{cov_parm}{parameters for the covariance function from the \code{GpGp} package}
 
 \item{NN}{n X m matrix for nearest neighbors. i-th row is the nearest neighbor indices of y_i. \code{NN[i, 1]} should be \code{i}}
+
+\item{ordering}{\code{0} for do not reorder, \code{1} for variance descending order}
 
 \item{seed}{set seed for reproducibility}
 }
@@ -67,10 +70,14 @@ y_cens[mask] <- NA
 lb <- rep(-Inf, 100)
 ub <- rep(0.3, 100)
 m <- 10
-y_samp_mtd1 <- rtmvn_snn(y_cens, lb, ub, mask, m = m, locs = x, 
-                         cov_name = cov_name, cov_parm = cov_parm, seed = 123)
-y_samp_mtd2 <- rtmvn_snn(y_cens, lb, ub, mask, m = m, covmat = covmat, 
-                         seed = 123)
+y_samp_mtd1 <- rtmvn_snn(y_cens, lb, ub, mask,
+  m = m, locs = x,
+  cov_name = cov_name, cov_parm = cov_parm, seed = 123
+)
+y_samp_mtd2 <- rtmvn_snn(y_cens, lb, ub, mask,
+  m = m, covmat = covmat,
+  seed = 123
+)
 plot(x, y_cens, ylim = range(y))
 points(x[mask, ], y[mask], col = "blue")
 plot(x, y_cens, ylim = range(y))
