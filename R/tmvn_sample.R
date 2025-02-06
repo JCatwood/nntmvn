@@ -16,7 +16,7 @@
 #' @param cov_name covariance function name from the `GpGp` package
 #' @param cov_parm parameters for the covariance function from the `GpGp` package
 #' @param NN n X m matrix for nearest neighbors. i-th row is the nearest neighbor indices of y_i. `NN[i, 1]` should be `i`
-#' @param ordering `0` for do not reorder, `1` for variance descending order
+#' @param ordering `0` for do not reorder, `1` for variance descending order, `2` for maximin ordering
 #' @param seed set seed for reproducibility
 #' @return a vector of length n representing the underlying GP responses
 #' @export
@@ -104,6 +104,25 @@ rtmvn_snn <- function(y, cens_lb, cens_ub, mask_cens, m = 30, covmat = NULL,
         warning(paste("When ordering is", ordering, "the input NN is ignored\n"))
         NN <- NULL
       }
+    }
+  } else if (ordering == 2) {
+    if (is.null(locs)) {
+      stop("locs must be provided if ordering = 2 for maximin ordering\n")
+    }
+    order_new <- GpGp::order_maxmin(locs)
+    y <- y[order_new]
+    cens_lb <- cens_lb[order_new]
+    cens_ub <- cens_ub[order_new]
+    # mask_cens <- mask_cens[order_new]
+    if (!is.null(locs)) {
+      locs <- locs[order_new, , drop = FALSE]
+    }
+    if (!is.null(covmat)) {
+      covmat <- covmat[order_new, order_new, drop = FALSE]
+    }
+    if (!is.null(NN)) {
+      warning(paste("When ordering is", ordering, "the input NN is ignored\n"))
+      NN <- NULL
     }
   } else {
     stop("Undefined ordering. Allowed input for ordering is 0 or 1")
