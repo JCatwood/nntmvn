@@ -1,7 +1,7 @@
 Package: nntmvn
 Title: Draw Samples of Truncated Multivariate Normal Distributions
-Version: 1.1.1
-Date: 2025-01-31
+Version: 1.2.0
+Date: 2025-02-06
 Authors@R: 
     c(person("Jian Cao", role = c("aut", "cre"), email = "jcao2416@gmail.com"), 
     person("Matthias Katzfuss", role = "aut"))
