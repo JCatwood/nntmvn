@@ -113,7 +113,7 @@ rptmvn <- function(y, cens_lb, cens_ub, mask_cens, m = 30, covmat = NULL,
     y <- y[order_new]
     cens_lb <- cens_lb[order_new]
     cens_ub <- cens_ub[order_new]
-    # mask_cens <- mask_cens[order_new]
+    mask_cens <- mask_cens[order_new]
     if (!is.null(locs)) {
       locs <- locs[order_new, , drop = FALSE]
     }
