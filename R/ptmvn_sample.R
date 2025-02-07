@@ -4,6 +4,7 @@
 #' @importFrom TruncatedNormal rtmvnorm
 #' @importFrom utils getFromNamespace
 #' @importFrom RANN nn2
+#' @importFrom stats dnorm
 #' @import GpGp
 #' @param y uncensored responses of length n, where n is the number of all responses
 #' @param cens_lb lower bound vector for TMVN of length n

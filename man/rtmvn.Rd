@@ -59,11 +59,11 @@ covmat <- cov_func(cov_parm, x)
 lb <- rep(-Inf, nrow(x))
 ub <- rep(-1, nrow(x))
 m <- 30
-samp_SNN <- matrix(NA, 50, nrow(x))
-for (i in 1 : 50) {
+samp_SNN <- matrix(NA, 3, nrow(x))
+for (i in 1:3) {
   samp_SNN[i, ] <- nntmvn::rtmvn(lb, ub, m = m, covmat = covmat, locs = x, ordering = 0)
 }
-samp_TN <- TruncatedNormal::rtmvnorm(50, rep(0, nrow(x)), covmat, lb, ub)
+samp_TN <- TruncatedNormal::rtmvnorm(3, rep(0, nrow(x)), covmat, lb, ub)
 qqplot(samp_SNN, samp_TN, xlim = range(samp_SNN, samp_TN), ylim = range(samp_SNN, samp_TN))
 abline(a = 0, b = 1, lty = "dashed", col = "red")
 
